@@ -1,0 +1,60 @@
+Git workflow
+
+Create branch
+Branches should be created from master and should start with the "issue-" prefix and the issue number optionally followed by other identifying information:
+
+git checkout master                            # change current branch to master
+git checkout -b issue-1234-example             # make a branch
+
+
+Commit changes
+After making the required changes, code should be commit to the local branch
+
+git add path/to/file.php                       # add changes to staging. you can also use interactive mode (git add -i) or a path to a directory to include all changed files at once (git add .)
+git commit -m "adding changes. fixes #1234"    # commit the staged changes with a message
+
+
+Push to origin
+Commits should be pushed to the origin repository for review
+
+git push -u origin issue-1234-example          # -u will set the remote branch as an upstream for tracking changes
+
+
+Rebase branch
+In some cases when there are a lot of commits in the branch and we want a cleaner git history a good idea is to rebase your branch off master regularly in order to place your commits sorted on top of the latest master. This is optional and should be executed before merging. Rebase rewrites git history so it should be used with caution.
+
+git checkout master                            # change current branch to master
+git pull origin master                         # get latest changes from origin
+git checkout issue-1234-example                # change again to the branch
+git rebase master                              # rebase your branch with the latest master. you can also you interactive mode (-i) to squash or reoder commits
+git pull origin issue-1234-example             # after a rebase usually a pull is required
+git push origin issue-1234-example             # push branch to origin
+
+Merge branch
+After a successful code review the branch should be merged into master. We should make non fast forward merges so that a merge commit is created. It can be used for a revert and a log message for the actual branch merge.
+
+git checkout master                            # change current branch to master
+git pull origin master                         # fetch latest commits from master
+git merge --no-ff issue-1234-example           # --no-ff will disable fast forward merges
+git commit                                     # commit the merge without a message to use the standard merge commit message
+git push origin master                         # push the changes to origin
+
+Delete branch
+When an issue is closed the corresponding branch should be deleted:
+
+git branch -d issue-1234-example               # (or --delete) delete the local branch if it has been fully merged in upstream. -D (or --delete --force) to delete irrespective of its merge status
+git push origin --delete issue-1234-example    # delete the branch in origin
+
+Fix conflicts
+During a merge or a rebase a conflict may happen. They should be fixed and commited with the merge
+
+git add path/to/conflicted/file.php            # after resolving the conflicts add the conflicted files to staging
+git commit                                     # usually there's a predefined message, so no message is required here
+git rebase --continue                          # if we are in the middle of a rebase, it should be continued. this command is not required when merging
+
+Release
+When the master branch is stable and is time for a release it should be merged with the production branch and a new annotated tag should be made:
+
+git checkout production                        # change current branch to production
+git merge master                               # merge master to production, no --no-ff is required because we'll make a tag for the merge anyway
+git tag v1.2.3 -m "Live v1.2.3: ..."           # -m s
