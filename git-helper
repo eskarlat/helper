@@ -58,3 +58,8 @@ When the master branch is stable and is time for a release it should be merged w
 git checkout production                        # change current branch to production
 git merge master                               # merge master to production, no --no-ff is required because we'll make a tag for the merge anyway
 git tag v1.2.3 -m "Live v1.2.3: ..."           # -m s
+
+To add a new file to the previous commit:
+
+$ git add new-file
+$ git commit --amend
